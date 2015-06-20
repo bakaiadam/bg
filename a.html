@@ -1,0 +1,322 @@
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<body onload="startscreen()">
+
+<script>
+
+function isInArray(array, search)
+{
+    return array.indexOf(search) >= 0;
+}
+
+
+players=["adam","bela","cecilia","dani","elemer"];
+function get(key)
+{
+if (key==="spy_fall_locations")
+{
+return ["repülő","bank","iskola","filmstúdió","rendőrség","kaszinó","étterem","kereszteshadsereg","űrhajó","állatkert","diszkó","szupermarket","katonai támaszpont","vidámpark","sarkköri kutatóállomás","kalózhajó","vonat","vízpart","hotel","szinház","nagykövetség","autószerelő","egyetem","tengeralattjáró","óceánjáró","múzeum","könyvtár","konditerem","esküvő","golfpálya","bíróság","bánya","stadion","erdő","bűnügyi helyszinelés","céges megbeszélés","őskor"];
+}
+var v=
+{
+"You are the spy":"Kém vagy!",
+"You are here:":"Itt vagy:",
+"spy won":"A kém nyert",
+"non spies won":"A nem kémek nyertek",
+"The word is:":"A titkos szó:",
+"show":"mutasd",
+"set word":"beállít"
+};
+var ret=v[key];
+if (ret===undefined)
+return key;
+else
+return ret;
+}
+function add()
+{
+name=document.getElementById('FirstName').value;
+//alert(name);
+players.push(name);
+startscreen();
+
+}
+function get_indexes(ar,num)
+{
+//FIXME: nem kezeli le, ha a num nagyobb mitn az ar.length
+ret=[];
+while (ret.length<num)
+{
+
+var randi = Math.floor(Math.random() * ar.length);
+if (isInArray(ret,randi)) continue;
+ret.push(randi);
+}
+
+
+return ret;
+
+}
+
+var game=null;
+
+function FANY()
+{
+var qmi=-1;
+var loc="";
+var spy_indexes = get_indexes(players,1)[0];
+
+function init()
+{
+spy_indexes = get_indexes(players,1)[0];
+}
+init();
+var points=[];
+for (var i=0;i<players.length;i++)
+{
+points.push(0);
+}
+var checked=[];
+for (var i=0;i<players.length;i++)
+{
+checked.push(0);
+}
+
+var starts=function()
+{
+playerbuttons="";
+for (var i=0;i<players.length;i++)
+{
+var name=players[i];
+playerbuttons=playerbuttons+"<br/>"+points[i]+" "+name;
+
+if (loc.length==0) 
+{
+playerbuttons=playerbuttons+"<input id="+i+" tet=\"\" ></input> <button onclick=\"show("+i+");\"  >"+get("set word")+"</button>";
+}
+else
+{
+if (i==qmi) playerbuttons=playerbuttons+" -=QM=-";
+if (checked[i]==0) playerbuttons=playerbuttons+"<button onclick=\"show("+i+");\"  >"+get("show")+"</button>";
+}
+}
+document.getElementById('content').innerHTML=
+//document.getElementById('content').innerHTML+
+'<button onclick="startscreen();"> go to start screen</button>'+
+playerbuttons;
+
+
+document.getElementById('content').innerHTML=
+document.getElementById('content').innerHTML+
+"<br/><button onclick=\"mclick('spy_won');\" >"+get("spy won")+"</button>"+
+"<br/><button onclick=\"mclick('spy_lost');\" >"+get("non spies won")+"</button>";
+
+document.getElementById('content').innerHTML=
+document.getElementById('content').innerHTML+'<br/><a href="http://oinkgms.com/?pid=37395574#buy">Buy A Fake Artist Goes to New York</a>'+
+'<br/><a href="http://files.oinkgms.com/download/rule_fakeartist_e.pdf">Rules</a>'
+;
+
+}
+
+mclick2=function(message)
+{
+//alert("masik");
+if (message==="spy_won")
+{
+points[spy_indexes]+=2;
+points[qmi]+=2;
+}
+else
+{
+for (var i=0;i<players.length;i++)
+{
+if (i!=spy_indexes && i!=qmi) points[i]+=1;
+}
+}
+
+checked=[];
+for (var i=0;i<players.length;i++)
+{
+checked.push(0);
+}
+loc="";
+init();
+starts();
+
+}
+
+
+var screenw=starts;
+
+show=function(i)
+{
+if (loc.length==0)
+{
+loc=document.getElementById(i).value;
+qmi=i;
+checked[i]=1;
+spy_indexes=i;
+while (spy_indexes==i)
+spy_indexes = get_indexes(players,1)[0];
+}
+else
+{
+message="";
+if (i==spy_indexes)
+message=get("You are the spy");
+else
+message=get("The word is:")+loc;
+alert(message);
+//console.log(game);
+checked[i]=1;
+}
+screenw();
+}
+//alert(loc+" "+spy_indexes);
+game=this;
+screenw();
+
+}
+
+function Spyfall()
+{
+
+locations=get("spy_fall_locations");
+var loc=locations[get_indexes(locations,1)[0] ];
+var spy_indexes = get_indexes(players,1)[0];
+
+function init()
+{
+loc=locations[get_indexes(locations,1)[0] ];
+spy_indexes = get_indexes(players,1)[0];
+}
+init();
+var points=[];
+for (var i=0;i<players.length;i++)
+{
+points.push(0);
+}
+var checked=[];
+for (var i=0;i<players.length;i++)
+{
+checked.push(0);
+}
+
+var starts=function()
+{
+playerbuttons="";
+for (var i=0;i<players.length;i++)
+{
+var name=players[i];
+playerbuttons=playerbuttons+"<br/>"+points[i]+" "+name;
+if (checked[i]==0) playerbuttons=playerbuttons+"<button onclick=\"show("+i+");\"  >show</button>";
+}
+document.getElementById('content').innerHTML=
+//document.getElementById('content').innerHTML+
+'<button onclick="startscreen();"> go to start screen</button>'+
+playerbuttons;
+
+
+document.getElementById('content').innerHTML=
+document.getElementById('content').innerHTML+
+"<br/><button onclick=\"mclick('spy_won');\" >"+get("spy won")+"</button>"+
+"<br/><button onclick=\"mclick('spy_lost');\" >"+get("non spies won")+"</button>";
+
+document.getElementById('content').innerHTML=
+document.getElementById('content').innerHTML+'<br/><a href="http://international.hobbyworld.ru/catalog/25-spyfall/">Spyfall</a> is designed by Alexandr Ushan and published by <a href="http://international.hobbyworld.ru/">Hobby World</a>';
+
+}
+
+mclick2=function(message)
+{
+//alert("masik");
+if (message==="spy_won")
+{
+points[spy_indexes]+=2;
+}
+else
+{
+for (var i=0;i<players.length;i++)
+{
+if (i!=spy_indexes) points[i]+=1;
+}
+}
+
+checked=[];
+for (var i=0;i<players.length;i++)
+{
+checked.push(0);
+}
+init();
+starts();
+}
+
+
+var screenw=starts;
+
+show=function(i)
+{
+message="";
+if (i==spy_indexes)
+message=get("You are the spy");
+else
+message=get("You are here:")+loc;
+alert(message);
+//console.log(game);
+checked[i]=1;
+screenw();
+}
+//alert(loc+" "+spy_indexes);
+game=this;
+screenw();
+}
+
+function mclick(i)
+{
+game.mclick2(i);
+}
+
+function show(i)
+{
+game.show(i);
+}
+
+function remove_player_index(index)
+{
+//alert(index);
+players.splice( index, 1 );
+startscreen();
+}
+function startscreen()
+{
+playerbuttons="";
+for (var i=0;i<players.length;i++)
+{
+var name=players[i];
+
+playerbuttons=playerbuttons+"<br/>"+name+"<button onclick=\"remove_player_index("+i+");\" >remove</button>";
+}
+document.getElementById('content').innerHTML=
+//document.getElementById('content').innerHTML+
+'<button onclick="FANY();"> play Fake artist goes to New York</button>'+
+'<br/><button onclick="Spyfall();"> play Spyfall</button>'+
+'<br/><input type="text" id="FirstName" value="" >'+
+'<button onclick="add();"> add new player</button>'+
+playerbuttons;
+document.getElementById('FirstName').value="P"+players.length;
+//alert(playerbuttons);
+//alert( document.getElementById('FirstName').value );
+//Spyfall();
+//FANY();
+}
+
+
+</script>
+<div id="content">
+
+</div>
+<br>
+Made by Ádám Bakai(bakaiadam at https://en.wikipedia.org/wiki/Gmail)
+</body>
+
+</html>
